@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_buyer_guide/screens/catalog.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +13,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mobile Buyer\'s Guide',
       theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: Scaffold(
-        appBar: AppBar(),
-        body: Container(),
-      ),
+      home: const Catalog(),
     );
   }
 }
