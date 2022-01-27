@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_buyer_guide/models/mobile.dart';
+import 'package:mobile_buyer_guide/services/mobile_service.dart';
 
 class Catalog extends StatefulWidget {
   const Catalog({Key? key}) : super(key: key);
@@ -8,9 +11,23 @@ class Catalog extends StatefulWidget {
 }
 
 class _CatalogState extends State<Catalog> {
-
   final PageController _pageController = PageController();
+  List<Mobile> _mobileList = <Mobile>[];
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _getMobileData();
+    });
+  }
+
+  Future<void> _getMobileData() async {
+    _mobileList = await MobileService(Dio()).getMobiles();
+    setState(()  {});
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -28,9 +45,11 @@ class _CatalogState extends State<Catalog> {
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: const [
-          Center(child: Text('List Page'),),
-          Center(child: Text('Fav Page'),),
+        children: [
+          _buildMobileListView(context),
+          const Center(
+            child: Text('Fav Page'),
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -47,6 +66,92 @@ class _CatalogState extends State<Catalog> {
             label: 'Favorite',
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMobileListView(BuildContext context) {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: _mobileList.length,
+      itemBuilder: (context, index) {
+        Mobile mobile = _mobileList[index];
+
+        return Column(
+          children: [
+            _buildItemBox(context, mobile),
+            const Divider(height: 1, thickness: 1.5),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildItemBox(BuildContext context, Mobile mobile) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        height: 100,
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: [
+            Image.network(
+              mobile.thumbImageURL!,
+              width: 80,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        mobile.name!,
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    mobile.description!,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
+                          children: <TextSpan>[
+                            const TextSpan(text: 'Price : ', style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: '\$${mobile.price!.toStringAsFixed(2)}'),
+                          ],
+                        ),
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
+                          children: <TextSpan>[
+                            const TextSpan(text: 'Rating : ', style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: mobile.rating!.toStringAsFixed(1)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
