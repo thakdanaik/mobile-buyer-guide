@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_buyer_guide/bloc/catalog/catalog_bloc.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
 import 'package:mobile_buyer_guide/theme/theme.dart';
@@ -13,22 +15,13 @@ class Catalog extends StatefulWidget {
 
 class _CatalogState extends State<Catalog> {
   final PageController _pageController = PageController();
-  List<Mobile> _mobileList = <Mobile>[];
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _getMobileData();
-    });
   }
 
-  Future<void> _getMobileData() async {
-    _mobileList = await MobileService(Dio()).getMobiles();
-    setState(()  {});
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -39,44 +32,51 @@ class _CatalogState extends State<Catalog> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mobile List'),
-      ),
-      body: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          _buildMobileListView(context),
-          const Center(
-            child: Text('Fav Page'),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.redAccent,
-        onTap: _onItemTapped,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'List',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorite',
-          ),
-        ],
+    return BlocProvider(
+      create: (context) => CatalogBloc(mobileService: MobileService(Dio()))..add(GetMobileDataEvent()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Mobile List'),
+        ),
+        body: BlocBuilder<CatalogBloc, CatalogState>(
+          builder: (context, state) {
+            return PageView(
+              controller: _pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _buildMobileListView(context, state.mobileList),
+                const Center(
+                  child: Text('Fav Page'),
+                ),
+              ],
+            );
+          },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.redAccent,
+          onTap: _onItemTapped,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'List',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favorite',
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMobileListView(BuildContext context) {
+  Widget _buildMobileListView(BuildContext context, List<Mobile> mobileList) {
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
-      itemCount: _mobileList.length,
+      itemCount: mobileList.length,
       itemBuilder: (context, index) {
-        Mobile mobile = _mobileList[index];
+        Mobile mobile = mobileList[index];
 
         return Column(
           children: [
