@@ -14,6 +14,7 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
 
   CatalogBloc({required this.mobileService}) : super(CatalogState()) {
     on<GetMobileDataEvent>(_getMobileData);
+    on<ChangePageViewEvent>(_changePageView);
   }
 
   Future<void> _getMobileData(
@@ -22,5 +23,12 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
   ) async {
     List<Mobile> mobileList = await mobileService.getMobiles();
     emit(CatalogState(mobileList: mobileList));
+  }
+
+  Future<void> _changePageView(
+    ChangePageViewEvent event,
+    Emitter<CatalogState> emit,
+  ) async {
+    emit(CatalogState(mobileList: state.mobileList, currentPage: event.pageIndex));
   }
 }

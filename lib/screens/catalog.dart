@@ -15,32 +15,28 @@ class Catalog extends StatefulWidget {
 
 class _CatalogState extends State<Catalog> {
   final PageController _pageController = PageController();
-  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
   }
 
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      _pageController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CatalogBloc(mobileService: MobileService(Dio()))..add(GetMobileDataEvent()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Mobile List'),
-        ),
-        body: BlocBuilder<CatalogBloc, CatalogState>(
-          builder: (context, state) {
-            return PageView(
+      child: BlocConsumer<CatalogBloc, CatalogState>(
+        listener: (context, state) {
+          if(_pageController.page!.compareTo(state.currentPage) != 0){
+            _pageController.animateToPage(state.currentPage, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+          }
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Mobile List'),
+            ),
+            body: PageView(
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
@@ -49,24 +45,24 @@ class _CatalogState extends State<Catalog> {
                   child: Text('Fav Page'),
                 ),
               ],
-            );
-          },
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          selectedItemColor: Colors.redAccent,
-          onTap: _onItemTapped,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: 'List',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: 'Favorite',
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: state.currentPage,
+              selectedItemColor: Colors.redAccent,
+              onTap: (index) => BlocProvider.of<CatalogBloc>(context).add(ChangePageViewEvent(pageIndex: index)),
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.list),
+                  label: 'List',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite),
+                  label: 'Favorite',
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
