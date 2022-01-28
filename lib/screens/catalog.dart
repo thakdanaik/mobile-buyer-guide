@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
+import 'package:mobile_buyer_guide/theme/theme.dart';
 
 class Catalog extends StatefulWidget {
   const Catalog({Key? key}) : super(key: key);
@@ -110,9 +111,7 @@ class _CatalogState extends State<Catalog> {
                     children: [
                       Text(
                         mobile.name!,
-                        style: const TextStyle(
-                          fontSize: 18,
-                        ),
+                        style: Theme.of(context).textTheme.large,
                       ),
                     ],
                   ),
@@ -120,28 +119,26 @@ class _CatalogState extends State<Catalog> {
                     mobile.description!,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
+                    style: Theme.of(context).textTheme.normal,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       RichText(
                         text: TextSpan(
-                          style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
+                          style: DefaultTextStyle.of(context).style,
                           children: <TextSpan>[
-                            const TextSpan(text: 'Price : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: '\$${mobile.price!.toStringAsFixed(2)}'),
+                            TextSpan(text: 'Price : ', style: Theme.of(context).textTheme.normal.copyWith(fontWeight: FontWeight.bold)),
+                            TextSpan(text: '\$${mobile.price!.toStringAsFixed(2)}', style: Theme.of(context).textTheme.normal),
                           ],
                         ),
                       ),
                       RichText(
                         text: TextSpan(
-                          style: DefaultTextStyle.of(context).style.copyWith(fontSize: 14),
+                          style: DefaultTextStyle.of(context).style,
                           children: <TextSpan>[
-                            const TextSpan(text: 'Rating : ', style: TextStyle(fontWeight: FontWeight.bold)),
-                            TextSpan(text: mobile.rating!.toStringAsFixed(1)),
+                            TextSpan(text: 'Rating : ', style: Theme.of(context).textTheme.normal.copyWith(fontWeight: FontWeight.bold)),
+                            TextSpan(text: mobile.rating!.toStringAsFixed(1), style: Theme.of(context).textTheme.normal),
                           ],
                         ),
                       ),

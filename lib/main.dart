@@ -14,6 +14,10 @@ class MyApp extends StatelessWidget {
       title: 'Mobile Buyer\'s Guide',
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        textTheme: Theme.of(context).textTheme.apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
+        ),
       ),
       home: const Catalog(),
     );
