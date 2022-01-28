@@ -22,3 +22,9 @@ class RemoveFavoriteEvent extends CatalogEvent {
 
   RemoveFavoriteEvent({required this.mobile});
 }
+
+class SortDataEvent extends CatalogEvent {
+  final SortBy sortBy;
+
+  SortDataEvent({required this.sortBy});
+}

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_buyer_guide/bloc/catalog/catalog_bloc.dart';
+import 'package:mobile_buyer_guide/constants/constant.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
 import 'package:mobile_buyer_guide/theme/theme.dart';
@@ -21,6 +22,23 @@ class _CatalogState extends State<Catalog> {
     super.initState();
   }
 
+  Future<void> _onSortTapped(BuildContext context) async {
+    SortBy? sortBy = await showDialog<dynamic>(
+        context: context,
+        barrierDismissible: true,
+        barrierColor: Colors.black.withOpacity(0.6),
+        builder: (BuildContext ctx) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
+            content: _PopupSort(sortValue: BlocProvider.of<CatalogBloc>(context).state.sortBy),
+          );
+        });
+    if(sortBy != null) {
+      BlocProvider.of<CatalogBloc>(context).add(SortDataEvent(sortBy: sortBy));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -34,7 +52,16 @@ class _CatalogState extends State<Catalog> {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Mobile List'),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Mobile List'),
+                  GestureDetector(
+                    onTap: () async => await _onSortTapped(context),
+                    child: const Icon(Icons.sort),
+                  )
+                ],
+              ),
             ),
             body: PageView(
               controller: _pageController,
@@ -188,6 +215,35 @@ class _CatalogState extends State<Catalog> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _PopupSort extends StatelessWidget {
+  final SortBy sortValue;
+
+  const _PopupSort({required this.sortValue});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _buildRadioTile(context, 'Price (Low to High)', SortBy.priceLowToHigh),
+        _buildRadioTile(context, 'Price (High to Low)', SortBy.priceHighToLow),
+        _buildRadioTile(context, 'Rating (5 to 1)', SortBy.rating),
+      ],
+    );
+  }
+
+  Widget _buildRadioTile(BuildContext context, String text, SortBy value) {
+    return RadioListTile<SortBy>(
+      title: Text(text),
+      value: value,
+      groupValue: sortValue,
+      onChanged: (value) {
+        Navigator.of(context).pop(value);
+      },
     );
   }
 }
