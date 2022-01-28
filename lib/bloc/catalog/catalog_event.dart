@@ -16,3 +16,9 @@ class AddFavoriteEvent extends CatalogEvent {
 
   AddFavoriteEvent({required this.mobile});
 }
+
+class RemoveFavoriteEvent extends CatalogEvent {
+  final Mobile mobile;
+
+  RemoveFavoriteEvent({required this.mobile});
+}

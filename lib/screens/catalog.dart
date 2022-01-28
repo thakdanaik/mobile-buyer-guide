@@ -78,9 +78,30 @@ class _CatalogState extends State<Catalog> {
       itemBuilder: (context, index) {
         Mobile mobile = mobileList[index];
 
+        Widget item = Container();
+        if (isFavoriteView) {
+          item = Dismissible(
+            key: Key(mobile.id!.toString()),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) => BlocProvider.of<CatalogBloc>(context).add(RemoveFavoriteEvent(mobile: mobile)),
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20),
+              child: const Icon(
+                Icons.delete_forever,
+                size: 50,
+              ),
+            ),
+            child: _buildItemBox(context, mobile: mobile, isShowFavIcon: false),
+          );
+        } else {
+          item = _buildItemBox(context, mobile: mobile, isShowFavIcon: true);
+        }
+
         return Column(
           children: [
-            _buildItemBox(context, mobile: mobile, isShowFavIcon: !isFavoriteView),
+            item,
             const Divider(height: 1, thickness: 1.5),
           ],
         );

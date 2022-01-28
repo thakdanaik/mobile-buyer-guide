@@ -16,6 +16,7 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
     on<GetMobileDataEvent>(_getMobileData);
     on<ChangePageViewEvent>(_changePageView);
     on<AddFavoriteEvent>(_addFavorite);
+    on<RemoveFavoriteEvent>(_removeFavorite);
   }
 
   Future<void> _getMobileData(
@@ -24,14 +25,14 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
   ) async {
     emit(LoadingState(currentPage: state.currentPage));
     List<Mobile> mobileList = await mobileService.getMobiles();
-    emit(CatalogState(mobileList: mobileList, currentPage:  state.currentPage));
+    emit(CatalogState(mobileList: mobileList, currentPage: state.currentPage));
   }
 
   void _changePageView(
     ChangePageViewEvent event,
     Emitter<CatalogState> emit,
-  ) async {
-    if(state is LoadingState){
+  ) {
+    if (state is LoadingState) {
       emit(LoadingState(currentPage: event.pageIndex));
     } else {
       emit(CatalogState(mobileList: state.mobileList, favoriteList: state.favoriteList, currentPage: event.pageIndex));
@@ -39,10 +40,18 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
   }
 
   void _addFavorite(
-      AddFavoriteEvent event,
+    AddFavoriteEvent event,
     Emitter<CatalogState> emit,
-  ) async {
+  ) {
     event.mobile.isFavorite = true;
+    emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage));
+  }
+
+  void _removeFavorite(
+    RemoveFavoriteEvent event,
+    Emitter<CatalogState> emit,
+  ) {
+    event.mobile.isFavorite = false;
     emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage));
   }
 }
