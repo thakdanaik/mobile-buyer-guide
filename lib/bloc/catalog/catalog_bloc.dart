@@ -21,14 +21,19 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
     GetMobileDataEvent event,
     Emitter<CatalogState> emit,
   ) async {
+    emit(LoadingState(currentPage: state.currentPage));
     List<Mobile> mobileList = await mobileService.getMobiles();
-    emit(CatalogState(mobileList: mobileList));
+    emit(CatalogState(mobileList: mobileList, currentPage:  state.currentPage));
   }
 
   Future<void> _changePageView(
     ChangePageViewEvent event,
     Emitter<CatalogState> emit,
   ) async {
-    emit(CatalogState(mobileList: state.mobileList, currentPage: event.pageIndex));
+    if(state is LoadingState){
+      emit(LoadingState(currentPage: event.pageIndex));
+    } else {
+      emit(CatalogState(mobileList: state.mobileList, currentPage: event.pageIndex));
+    }
   }
 }

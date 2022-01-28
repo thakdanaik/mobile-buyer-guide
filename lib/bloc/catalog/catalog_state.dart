@@ -6,3 +6,7 @@ class CatalogState {
 
   CatalogState({this.mobileList = const <Mobile>[], this.currentPage = 0});
 }
+
+class LoadingState extends CatalogState {
+  LoadingState({required int currentPage}) : super(currentPage: currentPage);
+}

@@ -27,7 +27,7 @@ class _CatalogState extends State<Catalog> {
       create: (context) => CatalogBloc(mobileService: MobileService(Dio()))..add(GetMobileDataEvent()),
       child: BlocConsumer<CatalogBloc, CatalogState>(
         listener: (context, state) {
-          if(_pageController.page!.compareTo(state.currentPage) != 0){
+          if(state.currentPage.compareTo(_pageController.page ?? 0) != 0){
             _pageController.animateToPage(state.currentPage, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
           }
         },
@@ -68,6 +68,12 @@ class _CatalogState extends State<Catalog> {
   }
 
   Widget _buildMobileListView(BuildContext context, List<Mobile> mobileList) {
+    if(BlocProvider.of<CatalogBloc>(context).state is LoadingState){
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       itemCount: mobileList.length,

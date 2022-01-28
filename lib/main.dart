@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
           displayColor: Colors.black,
         ),
       ),
+      debugShowCheckedModeBanner: false,
       home: const Catalog(),
     );
   }
