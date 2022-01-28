@@ -10,3 +10,9 @@ class ChangePageViewEvent extends CatalogEvent {
 
   ChangePageViewEvent({required this.pageIndex});
 }
+
+class AddFavoriteEvent extends CatalogEvent {
+  final Mobile mobile;
+
+  AddFavoriteEvent({required this.mobile});
+}

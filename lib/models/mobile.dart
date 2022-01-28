@@ -7,7 +7,9 @@ class Mobile {
   double? price;
   String? brand;
 
-  Mobile({this.id, this.rating, this.thumbImageURL, this.name, this.description, this.price, this.brand});
+  bool? isFavorite;
+
+  Mobile({this.id, this.rating, this.thumbImageURL, this.name, this.description, this.price, this.brand, this.isFavorite = false});
 
   Mobile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -17,6 +19,7 @@ class Mobile {
     description = json['description'];
     price = json['price']?.toDouble();
     brand = json['brand'];
+    isFavorite = json['isFavorite'];
   }
 
   Map<String, dynamic> toJson() {
@@ -28,6 +31,7 @@ class Mobile {
     data['description'] = description;
     data['price'] = price;
     data['brand'] = brand;
+    data['isFavorite'] = isFavorite;
     return data;
   }
 }

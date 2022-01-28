@@ -27,7 +27,7 @@ class _CatalogState extends State<Catalog> {
       create: (context) => CatalogBloc(mobileService: MobileService(Dio()))..add(GetMobileDataEvent()),
       child: BlocConsumer<CatalogBloc, CatalogState>(
         listener: (context, state) {
-          if(state.currentPage.compareTo(_pageController.page ?? 0) != 0){
+          if (state.currentPage.compareTo(_pageController.page ?? 0) != 0) {
             _pageController.animateToPage(state.currentPage, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
           }
         },
@@ -40,10 +40,8 @@ class _CatalogState extends State<Catalog> {
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-                _buildMobileListView(context, state.mobileList),
-                const Center(
-                  child: Text('Fav Page'),
-                ),
+                _buildMobileListView(context, mobileList: state.mobileList, isFavoriteView: false),
+                _buildMobileListView(context, mobileList: state.favoriteList, isFavoriteView: true),
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -67,8 +65,8 @@ class _CatalogState extends State<Catalog> {
     );
   }
 
-  Widget _buildMobileListView(BuildContext context, List<Mobile> mobileList) {
-    if(BlocProvider.of<CatalogBloc>(context).state is LoadingState){
+  Widget _buildMobileListView(BuildContext context, {required List<Mobile> mobileList, required bool isFavoriteView}) {
+    if (BlocProvider.of<CatalogBloc>(context).state is LoadingState) {
       return const Center(
         child: CircularProgressIndicator(),
       );
@@ -82,7 +80,7 @@ class _CatalogState extends State<Catalog> {
 
         return Column(
           children: [
-            _buildItemBox(context, mobile),
+            _buildItemBox(context, mobile: mobile, isShowFavIcon: !isFavoriteView),
             const Divider(height: 1, thickness: 1.5),
           ],
         );
@@ -90,7 +88,7 @@ class _CatalogState extends State<Catalog> {
     );
   }
 
-  Widget _buildItemBox(BuildContext context, Mobile mobile) {
+  Widget _buildItemBox(BuildContext context, {required Mobile mobile, required bool isShowFavIcon}) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -115,6 +113,23 @@ class _CatalogState extends State<Catalog> {
                         mobile.name!,
                         style: Theme.of(context).textTheme.large,
                       ),
+                      if (isShowFavIcon)
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () {
+                            BlocProvider.of<CatalogBloc>(context).add(AddFavoriteEvent(mobile: mobile));
+                          },
+                          child: (mobile.isFavorite ?? false)
+                              ? const Icon(
+                                  Icons.favorite,
+                                  color: Colors.redAccent,
+                                )
+                              : const Icon(
+                                  Icons.favorite_outline,
+                                  color: Colors.grey,
+                                ),
+                        )
                     ],
                   ),
                   Text(
