@@ -176,10 +176,7 @@ class _CatalogViewState extends State<CatalogView> {
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
-            Image.network(
-              mobile.thumbImageURL!,
-              width: 80,
-            ),
+            _buildThumbImage(context, mobile.thumbImageURL),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -257,6 +254,26 @@ class _CatalogViewState extends State<CatalogView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildThumbImage(BuildContext context, String? imageUrl){
+    if(imageUrl == null || imageUrl == ''){
+      return Container(
+        width: 80,
+        color: Colors.white,
+        child: const Center(child: Text('No Image', textAlign: TextAlign.center,)),
+      );
+    }
+
+    return Image.network(
+      imageUrl,
+      width: 80,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: 80,
+        color: Colors.white,
+        child: const Center(child: Text('Invalid Image', textAlign: TextAlign.center,)),
       ),
     );
   }
