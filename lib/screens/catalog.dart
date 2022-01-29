@@ -25,6 +25,12 @@ class _CatalogState extends State<Catalog> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _catalogBloc.close();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _catalogBloc,
@@ -164,7 +170,7 @@ class _CatalogViewState extends State<CatalogView> {
 
   Widget _buildItemBox(BuildContext context, {required Mobile mobile, required bool isShowFavIcon}) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, AppRoutePaths.detail),
+      onTap: () => Navigator.pushNamed(context, AppRoutePaths.detail, arguments: mobile),
       child: Container(
         height: 100,
         padding: const EdgeInsets.all(10.0),
