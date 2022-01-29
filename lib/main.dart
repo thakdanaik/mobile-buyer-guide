@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_buyer_guide/router.dart';
 import 'package:mobile_buyer_guide/screens/catalog.dart';
 
 void main() {
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: AppRouter.generateRoute,
       home: const Catalog(),
     );
   }

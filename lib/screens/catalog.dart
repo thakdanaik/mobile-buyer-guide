@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_buyer_guide/bloc/catalog/catalog_bloc.dart';
 import 'package:mobile_buyer_guide/constants/constant.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
+import 'package:mobile_buyer_guide/router.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
 import 'package:mobile_buyer_guide/theme/theme.dart';
 
@@ -163,7 +164,7 @@ class _CatalogViewState extends State<CatalogView> {
 
   Widget _buildItemBox(BuildContext context, {required Mobile mobile, required bool isShowFavIcon}) {
     return InkWell(
-      onTap: () {},
+      onTap: () => Navigator.pushNamed(context, AppRoutePaths.detail),
       child: Container(
         height: 100,
         padding: const EdgeInsets.all(10.0),
