@@ -62,8 +62,10 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
       SortDataEvent event,
       Emitter<CatalogState> emit,
       ) {
-    _sortMobileList(state.mobileList, event.sortBy);
-    emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: event.sortBy));
+    List<Mobile> mobileList = state.mobileList;
+    emit(LoadingState(currentPage: state.currentPage));
+    _sortMobileList(mobileList, event.sortBy);
+    emit(CatalogState(mobileList: mobileList, favoriteList: mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: event.sortBy));
   }
 
   void _sortMobileList(List<Mobile> mobileList, SortBy sortBy){
