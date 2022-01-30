@@ -1,18 +1,24 @@
 part of 'detail_bloc.dart';
 
-class DetailState {
+class DetailState extends Equatable {
   final Mobile mobile;
   final List<MobileImage> imageList;
 
-  DetailState({required this.mobile, this.imageList = const <MobileImage>[]});
+  const DetailState({required this.mobile, this.imageList = const <MobileImage>[]});
+
+  @override
+  List<Object> get props => [mobile, imageList];
 }
 
 class LoadingState extends DetailState {
-  LoadingState({required Mobile mobile}) : super(mobile: mobile);
+  LoadingState(DetailState state) : super(mobile: state.mobile, imageList: state.imageList);
 }
 
 class ExceptionState extends DetailState {
   final String errorMsg;
 
-  ExceptionState({required Mobile mobile, required this.errorMsg,}) : super(mobile: mobile);
+  ExceptionState(DetailState state, {required this.errorMsg}) : super(mobile: state.mobile, imageList: state.imageList);
+
+  @override
+  List<Object> get props => [mobile, imageList, errorMsg];
 }

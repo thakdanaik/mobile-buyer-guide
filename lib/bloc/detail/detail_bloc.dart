@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/models/mobile_image.dart';
@@ -24,13 +25,13 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
     Emitter<DetailState> emit,
   ) async {
     try {
-      emit(LoadingState(mobile: mobile));
+      emit(LoadingState(state));
       List<MobileImage> imageList = await mobileService.getMobileImages(mobile.id!);
       emit(DetailState(mobile: mobile, imageList: imageList));
     } on DioError catch (error) {
-      emit(ExceptionState(mobile: mobile, errorMsg: error.type == DioErrorType.response ? error.message : 'An error occurred in the system.'));
+      emit(ExceptionState(state, errorMsg: error.type == DioErrorType.response ? error.message : 'An error occurred in the system.'));
     } catch (error) {
-      emit(ExceptionState(mobile: mobile, errorMsg: 'An error occurred in the system.'));
+      emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
     }
   }
 }

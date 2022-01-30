@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
+import 'package:equatable/equatable.dart';
 import 'package:mobile_buyer_guide/constants/constant.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
@@ -14,7 +15,7 @@ part 'catalog_state.dart';
 class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
   final MobileService mobileService;
 
-  CatalogBloc({required this.mobileService}) : super(CatalogState()) {
+  CatalogBloc({required this.mobileService}) : super(const CatalogState()) {
     on<GetMobileDataEvent>(_getMobileData);
     on<ChangePageViewEvent>(_changePageView);
     on<AddFavoriteEvent>(_addFavorite);
