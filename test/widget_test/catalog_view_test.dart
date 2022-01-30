@@ -53,7 +53,7 @@ void main() {
 
     //Tap Favorite
     await tester.tap(find.byIcon(Icons.favorite_outline).first);
-    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
     await expectLater((tester.firstWidget(find.byType(Icon)) as Icon).color, Colors.redAccent);
 
     //Change to Favorite View
