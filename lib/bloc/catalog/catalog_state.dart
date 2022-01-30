@@ -10,5 +10,12 @@ class CatalogState {
 }
 
 class LoadingState extends CatalogState {
-  LoadingState({required int currentPage}) : super(currentPage: currentPage);
+
+  LoadingState(CatalogState state) : super(mobileList: state.mobileList, favoriteList: state.favoriteList, sortBy: state.sortBy, currentPage: state.currentPage);
+}
+
+class ExceptionState extends CatalogState {
+  final String errorMsg;
+
+  ExceptionState(CatalogState state, {required this.errorMsg}) : super(mobileList: state.mobileList, favoriteList: state.favoriteList, sortBy: state.sortBy, currentPage: state.currentPage);
 }

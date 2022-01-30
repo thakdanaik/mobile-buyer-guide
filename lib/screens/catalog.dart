@@ -7,6 +7,7 @@ import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/router.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
 import 'package:mobile_buyer_guide/theme/theme.dart';
+import 'package:mobile_buyer_guide/widgets/exception_dialog.dart';
 
 class Catalog extends StatefulWidget {
   const Catalog({Key? key}) : super(key: key);
@@ -77,8 +78,18 @@ class _CatalogViewState extends State<CatalogView> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CatalogBloc, CatalogState>(
-      listener: (context, state) {
-        if (state.currentPage.compareTo(_pageController.page ?? 0) != 0) {
+      bloc: widget.catalogBloc,
+      listener: (context, state) async {
+        if (state is ExceptionState) {
+          await showDialog<dynamic>(
+            context: context,
+            barrierDismissible: false,
+            barrierColor: Colors.black.withOpacity(0.6),
+            builder: (BuildContext ctx) {
+              return ExceptionDialog(message: state.errorMsg,);
+            },
+          );
+        } else if (state.currentPage.compareTo(_pageController.page ?? 0) != 0) {
           _pageController.animateToPage(state.currentPage, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
         }
       },
@@ -258,12 +269,16 @@ class _CatalogViewState extends State<CatalogView> {
     );
   }
 
-  Widget _buildThumbImage(BuildContext context, String? imageUrl){
-    if(imageUrl == null || imageUrl == ''){
+  Widget _buildThumbImage(BuildContext context, String? imageUrl) {
+    if (imageUrl == null || imageUrl == '') {
       return Container(
         width: 80,
         color: Colors.white,
-        child: const Center(child: Text('No Image', textAlign: TextAlign.center,)),
+        child: const Center(
+            child: Text(
+          'No Image',
+          textAlign: TextAlign.center,
+        )),
       );
     }
 
@@ -273,7 +288,11 @@ class _CatalogViewState extends State<CatalogView> {
       errorBuilder: (context, error, stackTrace) => Container(
         width: 80,
         color: Colors.white,
-        child: const Center(child: Text('Invalid Image', textAlign: TextAlign.center,)),
+        child: const Center(
+            child: Text(
+          'Invalid Image',
+          textAlign: TextAlign.center,
+        )),
       ),
     );
   }

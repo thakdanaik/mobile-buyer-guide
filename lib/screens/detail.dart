@@ -5,6 +5,7 @@ import 'package:mobile_buyer_guide/bloc/detail/detail_bloc.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/services/mobile_service.dart';
 import 'package:mobile_buyer_guide/theme/theme.dart';
+import 'package:mobile_buyer_guide/widgets/exception_dialog.dart';
 
 class Detail extends StatefulWidget {
   final Mobile mobile;
@@ -59,8 +60,22 @@ class _DetailViewState extends State<DetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DetailBloc, DetailState>(
+    return BlocConsumer<DetailBloc, DetailState>(
       bloc: widget.detailBloc,
+      listener: (context, state) async {
+        if (state is ExceptionState) {
+          await showDialog<dynamic>(
+            context: context,
+            barrierDismissible: false,
+            barrierColor: Colors.black.withOpacity(0.6),
+            builder: (BuildContext ctx) {
+              return ExceptionDialog(
+                message: state.errorMsg,
+              );
+            },
+          );
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(

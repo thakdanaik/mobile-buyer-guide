@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'package:mobile_buyer_guide/constants/constant.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
@@ -25,20 +26,32 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
     GetMobileDataEvent event,
     Emitter<CatalogState> emit,
   ) async {
-    emit(LoadingState(currentPage: state.currentPage));
-    List<Mobile> mobileList = await mobileService.getMobiles();
-    _sortMobileList(mobileList, state.sortBy);
-    emit(CatalogState(mobileList: mobileList, currentPage: state.currentPage));
+    try {
+      emit(LoadingState(state));
+      List<Mobile> mobileList = await mobileService.getMobiles();
+      _sortMobileList(mobileList, state.sortBy);
+      emit(CatalogState(mobileList: mobileList, currentPage: state.currentPage));
+    } catch (error) {
+      if (error is DioError) {
+        emit(ExceptionState(state, errorMsg: error.message));
+      }else {
+        emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
+      }
+    }
   }
 
   void _changePageView(
     ChangePageViewEvent event,
     Emitter<CatalogState> emit,
   ) {
-    if (state is LoadingState) {
-      emit(LoadingState(currentPage: event.pageIndex));
-    } else {
-      emit(CatalogState(mobileList: state.mobileList, favoriteList: state.favoriteList, currentPage: event.pageIndex, sortBy: state.sortBy));
+    try {
+      if (state is LoadingState) {
+        emit(LoadingState(state));
+      } else {
+        emit(CatalogState(mobileList: state.mobileList, favoriteList: state.favoriteList, currentPage: event.pageIndex, sortBy: state.sortBy));
+      }
+    } catch (error) {
+      emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
     }
   }
 
@@ -46,30 +59,41 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
     AddFavoriteEvent event,
     Emitter<CatalogState> emit,
   ) {
-    event.mobile.isFavorite = true;
-    emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: state.sortBy));
+    try {
+      event.mobile.isFavorite = true;
+      emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: state.sortBy));
+    } catch (error) {
+      emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
+    }
   }
 
   void _removeFavorite(
     RemoveFavoriteEvent event,
     Emitter<CatalogState> emit,
   ) {
-    event.mobile.isFavorite = false;
-    emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: state.sortBy));
+    try {
+      event.mobile.isFavorite = false;
+      emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: state.sortBy));
+    } catch (error) {
+      emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
+    }
   }
 
   void _sortData(
-      SortDataEvent event,
-      Emitter<CatalogState> emit,
-      ) {
-    List<Mobile> mobileList = state.mobileList;
-    emit(LoadingState(currentPage: state.currentPage));
-    _sortMobileList(mobileList, event.sortBy);
-    emit(CatalogState(mobileList: mobileList, favoriteList: mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: event.sortBy));
+    SortDataEvent event,
+    Emitter<CatalogState> emit,
+  ) {
+    try {
+      emit(LoadingState(state));
+      _sortMobileList(state.mobileList, event.sortBy);
+      emit(CatalogState(mobileList: state.mobileList, favoriteList: state.mobileList.where((e) => e.isFavorite ?? false).toList(), currentPage: state.currentPage, sortBy: event.sortBy));
+    } catch (error) {
+      emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
+    }
   }
 
-  void _sortMobileList(List<Mobile> mobileList, SortBy sortBy){
-    if(mobileList.isNotEmpty) {
+  void _sortMobileList(List<Mobile> mobileList, SortBy sortBy) {
+    if (mobileList.isNotEmpty) {
       mobileList.sort((a, b) {
         switch (sortBy) {
           case SortBy.priceLowToHigh:
