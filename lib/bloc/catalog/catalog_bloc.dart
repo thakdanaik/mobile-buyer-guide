@@ -31,12 +31,10 @@ class CatalogBloc extends Bloc<CatalogEvent, CatalogState> {
       List<Mobile> mobileList = await mobileService.getMobiles();
       _sortMobileList(mobileList, state.sortBy);
       emit(CatalogState(mobileList: mobileList, currentPage: state.currentPage));
+    } on DioError catch (error) {
+      emit(ExceptionState(state, errorMsg: error.type == DioErrorType.response ? error.message : 'An error occurred in the system.'));
     } catch (error) {
-      if (error is DioError) {
-        emit(ExceptionState(state, errorMsg: error.message));
-      }else {
-        emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
-      }
+      emit(ExceptionState(state, errorMsg: 'An error occurred in the system.'));
     }
   }
 
