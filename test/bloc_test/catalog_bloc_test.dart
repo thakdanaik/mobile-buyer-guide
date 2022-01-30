@@ -6,7 +6,7 @@ import 'package:mobile_buyer_guide/constants/constant.dart';
 import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mockito/mockito.dart';
 
-import 'mobile_service.mocks.dart';
+import '../mock_service/mobile_service.mocks.dart';
 
 final Mobile iphone = Mobile(id: 1, name: 'Iphone SE', rating: 4.9, brand: 'Apple', price: 499.99);
 final Mobile samsung = Mobile(id: 2, name: 'Galaxy Note', rating: 4.7, brand: 'Samsung', price: 399.99);

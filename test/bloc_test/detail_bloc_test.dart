@@ -6,7 +6,7 @@ import 'package:mobile_buyer_guide/models/mobile.dart';
 import 'package:mobile_buyer_guide/models/mobile_image.dart';
 import 'package:mockito/mockito.dart';
 
-import 'mobile_service.mocks.dart';
+import '../mock_service/mobile_service.mocks.dart';
 
 final Mobile mobile = Mobile(id: 1, name: 'Iphone SE', rating: 4.9, brand: 'Apple', price: 499.99, description: 'this is description');
 final List<MobileImage> imageList = [
